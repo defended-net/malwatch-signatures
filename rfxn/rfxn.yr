@@ -1,0 +1,64 @@
+rule backdoor_php_wpvcd_tempexecution_0 {
+  meta:
+    author = "ryan macdonald (rfxn)"
+    license = "https://github.com/rfxn/linux-malware-detect?tab=GPL-2.0-1-ov-file#readme"
+    description = "associated with wp-vcd."
+
+  strings:
+    $re = /extract\s*\(\s*wp_temp_setupx?\s*\(\s*\$\w+\s*\)\s*\)/ nocase
+
+  condition:
+    $re
+}
+
+rule backdoor_php_wpvcd_divcodename_0 {
+  meta:
+    author = "ryan macdonald (rfxn)"
+    license = "https://github.com/rfxn/linux-malware-detect?tab=GPL-2.0-1-ov-file#readme"
+    description = "associated with wp-vcd."
+
+  strings:
+    $re = /\$div_code_name\s*\=\s*['"]wp_vcd['"];/ nocase
+
+  condition:
+    $re
+}
+
+rule backdoor_php_wpvcd_deployer_0 {
+  meta:
+    author = "ryan macdonald (rfxn)"
+    license = "https://github.com/rfxn/linux-malware-detect?tab=GPL-2.0-1-ov-file#readme"
+    description = "associated with wp-vcd."
+
+  strings:
+    $re = /strpos\s*\(\s*\$\w{1,40}\s*,\s*['"]WP_V_CD['"]\s*\)\s*===\s*false/ nocase
+
+  condition:
+    $re
+}
+
+rule ioc_php_wpvcd_prependedinclude_0 {
+  meta:
+    author = "ryan macdonald (rfxn)"
+    license = "https://github.com/rfxn/linux-malware-detect?tab=GPL-2.0-1-ov-file#readme"
+    description = "associated with wp-vcd."
+
+  strings:
+    $re = /^\<\?php\s+if\s*\(\s*file_exists\s*\(\s*dirname\s*\(\s*__FILE__\s*\)\s*\.\s*['"][^'"]+['"]\s*\)\s*\)\s*(include|require)(_once)?\s*\(\s*dirname\s*\(\s*__FILE__\s*\)\s*\.\s*['"][^'"]+['"]\s*\)\s*\;\s*\?\>\s*\<\?/ nocase
+
+  condition:
+    $re
+}
+
+rule spam_php_wpvcd_contentinjection_0 {
+  meta:
+    author = "ryan macdonald (rfxn)"
+    license = "https://github.com/rfxn/linux-malware-detect?tab=GPL-2.0-1-ov-file#readme"
+    description = "associated with wp-vcd."
+
+  strings:
+    $re = /\$ip\s*=\s*\@file_get_contents\s*\(\s*ABSPATH\s*\.\s*['"]wp\-includes\/wp\-feed\.php['"]/ nocase
+
+  condition:
+    $re
+}
