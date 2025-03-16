@@ -14,7 +14,7 @@ rule backdoor_php_wpvcd_tempexecution_0 {
 rule backdoor_php_wpvcd_divcodename_0 {
   meta:
     author = "ryan macdonald (rfxn)"
-    license = "https://github.com/rfxn/linux-malware-detect?tab=GPL-2.0-1-ov-file#readme"
+    license = "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
     description = "associated with wp-vcd."
 
   strings:
@@ -27,7 +27,7 @@ rule backdoor_php_wpvcd_divcodename_0 {
 rule backdoor_php_wpvcd_deployer_0 {
   meta:
     author = "ryan macdonald (rfxn)"
-    license = "https://github.com/rfxn/linux-malware-detect?tab=GPL-2.0-1-ov-file#readme"
+    license = "gnu-gplv2"
     description = "associated with wp-vcd."
 
   strings:
@@ -40,7 +40,7 @@ rule backdoor_php_wpvcd_deployer_0 {
 rule ioc_php_wpvcd_prependedinclude_0 {
   meta:
     author = "ryan macdonald (rfxn)"
-    license = "https://github.com/rfxn/linux-malware-detect?tab=GPL-2.0-1-ov-file#readme"
+    license = "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
     description = "associated with wp-vcd."
 
   strings:
@@ -53,7 +53,7 @@ rule ioc_php_wpvcd_prependedinclude_0 {
 rule spam_php_wpvcd_contentinjection_0 {
   meta:
     author = "ryan macdonald (rfxn)"
-    license = "https://github.com/rfxn/linux-malware-detect?tab=GPL-2.0-1-ov-file#readme"
+    license = "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
     description = "associated with wp-vcd."
 
   strings:

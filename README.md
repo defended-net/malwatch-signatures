@@ -36,3 +36,9 @@ A special thank you to the following signature vendors:
 Licence: https://creativecommons.org/licenses/by-nc/4.0/
 
 Changes: Rule names and meta fields formatting modified.
+
+- R-fx Networks https://www.rfxn.com
+
+Licence: GNU-GPLv2
+
+Changes: Rule names and meta fields formatting modified.
