@@ -1,0 +1,118 @@
+/*
+
+Webshell rules by Arnim Rupp
+
+*/
+
+rule webshell_php_base64_enc_0 {
+  meta:
+    author = "arnim rupp"
+    license = "https://creativecommons.org/licenses/by-nc/4.0/"
+    description = "obfuscated base64"
+
+  strings:
+    // decoder
+    $decoder1 = "base64_decode" fullword nocase wide ascii
+    $decoder2 = "openssl_decrypt" fullword nocase wide ascii
+    
+    // exec
+    $exec1 = "leGVj" wide ascii
+    $exec2 = "V4ZW" wide ascii
+    $exec3 = "ZXhlY" wide ascii
+    $exec4 = "UAeABlAGMA" wide ascii
+    $exec5 = "lAHgAZQBjA" wide ascii
+    $exec6 = "ZQB4AGUAYw" wide ascii
+    
+    // shell_exec
+    $shell1 = "zaGVsbF9leGVj" wide ascii
+    $shell2 = "NoZWxsX2V4ZW" wide ascii
+    $shell3 = "c2hlbGxfZXhlY" wide ascii
+    $shell4 = "MAaABlAGwAbABfAGUAeABlAGMA" wide ascii
+    $shell5 = "zAGgAZQBsAGwAXwBlAHgAZQBjA" wide ascii
+    $shell6 = "cwBoAGUAbABsAF8AZQB4AGUAYw" wide ascii
+    
+    // passthru
+    $passthru1 = "wYXNzdGhyd" wide ascii
+    $passthru2 = "Bhc3N0aHJ1" wide ascii
+    $passthru3 = "cGFzc3Rocn" wide ascii
+    $passthru4 = "AAYQBzAHMAdABoAHIAdQ" wide ascii
+    $passthru5 = "wAGEAcwBzAHQAaAByAHUA" wide ascii
+    $passthru6 = "cABhAHMAcwB0AGgAcgB1A" wide ascii
+    
+    // system
+    $system1 = "zeXN0ZW" wide ascii
+    $system2 = "N5c3Rlb" wide ascii
+    $system3 = "c3lzdGVt" wide ascii
+    $system4 = "MAeQBzAHQAZQBtA" wide ascii
+    $system5 = "zAHkAcwB0AGUAbQ" wide ascii
+    $system6 = "cwB5AHMAdABlAG0A" wide ascii
+    
+    // popen
+    $popen1 = "wb3Blb" wide ascii
+    $popen2 = "BvcGVu" wide ascii
+    $popen3 = "cG9wZW" wide ascii
+    $popen4 = "AAbwBwAGUAbg" wide ascii
+    $popen5 = "wAG8AcABlAG4A" wide ascii
+    $popen6 = "cABvAHAAZQBuA" wide ascii
+    
+    // proc_open
+    $proc_open1 = "wcm9jX29wZW" wide ascii
+    $proc_open2 = "Byb2Nfb3Blb" wide ascii
+    $proc_open3 = "cHJvY19vcGVu" wide ascii
+    $proc_open4 = "AAcgBvAGMAXwBvAHAAZQBuA" wide ascii
+    $proc_open5 = "wAHIAbwBjAF8AbwBwAGUAbg" wide ascii
+    $proc_open6 = "cAByAG8AYwBfAG8AcABlAG4A" wide ascii
+    
+    // pcntl_exec
+    $pcntl1 = "wY250bF9leGVj" wide ascii
+    $pcntl2 = "BjbnRsX2V4ZW" wide ascii
+    $pcntl3 = "cGNudGxfZXhlY" wide ascii
+    $pcntl4 = "AAYwBuAHQAbABfAGUAeABlAGMA" wide ascii
+    $pcntl5 = "wAGMAbgB0AGwAXwBlAHgAZQBjA" wide ascii
+    $pcntl6 = "cABjAG4AdABsAF8AZQB4AGUAYw" wide ascii
+    
+    // eval
+    $eval1 = "ldmFs" wide ascii
+    $eval2 = "V2YW" wide ascii
+    $eval3 = "ZXZhb" wide ascii
+    $eval4 = "UAdgBhAGwA" wide ascii
+    $eval5 = "lAHYAYQBsA" wide ascii
+    $eval6 = "ZQB2AGEAbA" wide ascii
+    
+    // assert
+    $assert1 = "hc3Nlcn" wide ascii
+    $assert2 = "Fzc2Vyd" wide ascii
+    $assert3 = "YXNzZXJ0" wide ascii
+    $assert4 = "EAcwBzAGUAcgB0A" wide ascii
+    $assert5 = "hAHMAcwBlAHIAdA" wide ascii
+    $assert6 = "YQBzAHMAZQByAHQA" wide ascii
+
+    // execu
+    $fp_execu1 = "leGVjd" wide ascii
+    $fp_execu2 = "V4ZWN1" wide ascii
+    $fp_execu3 = "ZXhlY3" wide ascii
+
+    // esystem
+    $fp_esystem1 = "lc3lzdGVt" wide ascii
+    $fp_esystem2 = "VzeXN0ZW" wide ascii
+    $fp_esystem3 = "ZXN5c3Rlb" wide ascii
+
+    // opening
+    $fp_opening1 = "vcGVuaW5n" wide ascii
+    $fp_opening2 = "9wZW5pbm" wide ascii
+    $fp_opening3 = "b3BlbmluZ" wide ascii
+  
+  condition:
+    any of ( $decoder* ) and 
+    (
+      ( any of ( $exec* ) and not any of ( $fp_execu* ) ) or 
+      any of ( $shell* ) or 
+      any of ( $passthru* ) or 
+      ( any of ( $system* ) and not any of ( $fp_esystem* ) ) or 
+      ( any of ( $popen* ) and not any of ( $fp_opening* ) ) or 
+      any of ( $proc_open* ) or 
+      any of ( $pcntl* ) or 
+      any of ( $eval* ) or 
+      any of ( $assert* )
+    )
+}
