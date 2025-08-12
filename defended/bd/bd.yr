@@ -5,27 +5,26 @@
                             defended.net
 */
 
-rule backdoor_php_anonfox_0 {
+rule bd_php_anonfox_0 {
   meta:
     author = "roscoe skeens"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "anonymousfox encoded hex."
+    description = "eval hex"
 
   strings:
-    $s1 = "error_reporting("
-    $s2 = "hexdec("
-    $s3 = "pack("
-    $s4 = "eval("
+    $h1 = { 68 65 78 64 65 63 [0-10] 28 [0-10] 73 75 62 73 74 72 }
+    $h2 = { 73 74 72 6C 65 6E [0-10] 28 [0-10] 74 72 69 6D }
+    $h3 = { 70 61 63 6B [0-10] 28 [0-10] 22 [0-1] ?? [0-10] 22 }
 
   condition:
     all of them
 }
 
-rule backdoor_php_eval_gz_b64_0 {
+rule bd_php_eval_gz_b64_0 {
   meta:
     author = "roscoe skeens"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "eval of gzipped base64 hex."
+    description = "eval gz b64 hex"
 
   strings:
     $s1 = "6576616C28677A756E636F6D7072657373286261736536345F6465636F64652827" fullword ascii
