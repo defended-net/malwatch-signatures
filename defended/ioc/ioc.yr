@@ -9,15 +9,43 @@ rule ioc_php_obf_comments_0 {
   meta:
     author = "roscoe skeens"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "obfuscation using comments."
+    description = "obf comments"
 
   strings:
-    // many js false positives.
-    $tag = "<?php"
-    $re = /\/\*\S{5,25}\*\//
+    $r1 = /\/\*\S{5,25}\*\//
+    $s1 = "<?php"
 
   condition:
-    $tag at 0 and
-    #re > 1 and
-    @re[2] - (@re[1] + !re[1]) <= 64
+    $s1 in (0..8) and
+    #r1 > 1 and
+    @r1[2] - (@r1[1] + !r1[1]) <= 64
+}
+
+rule ioc_php_obf_octals_0 {
+  meta:
+    author = "roscoe skeens"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf octals"
+
+  strings:
+    $r1 = /\\[0-7]{3}/
+    $s1 = "<?php"
+
+  condition:
+    $s1 in (0..8) and
+    #r1 > 3 and
+    @r1[2] - (@r1[1] + !r1[1]) <= 12
+}
+
+rule ioc_php_obf_concats_0 {
+  meta:
+    author = "roscoe skeens"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf concats"
+
+  strings:
+    $r1 = /\$\w{1,10}\{\d{1,2}\}\./
+
+  condition:
+    #r1 > 3
 }
