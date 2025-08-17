@@ -12,13 +12,41 @@ rule ioc_php_obf_comments_0 {
     description = "obf comments"
 
   strings:
-    $r1 = /\/\*\S{5,25}\*\//
+    $r1 = /\/\*\S{1,25}\*\//
     $s1 = "<?php"
 
   condition:
     $s1 in (0..8) and
     #r1 > 1 and
     @r1[2] - (@r1[1] + !r1[1]) <= 64
+}
+
+rule ioc_php_obf_comments_1 {
+  meta:
+    author = "roscoe skeens"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf comments"
+
+  strings:
+    $h1 = { (0D 0A | 0A) 2E 20[0-10] (2F 2F | 2F 2A) }
+
+  condition:
+    $h1
+}
+
+rule ioc_php_obf_hex_0 {
+  meta:
+    author = "roscoe skeens"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf hex"
+
+  strings:
+    $r1 = /\\x[0-9a-fA-F]{2}\\\d{2,3}/
+    $s1 = "<?php"
+
+  condition:
+    $s1 in (0..8) and
+    $r1
 }
 
 rule ioc_php_obf_octals_0 {
@@ -33,7 +61,7 @@ rule ioc_php_obf_octals_0 {
 
   condition:
     $s1 in (0..8) and
-    #r1 > 3 and
+    #r1 > 2 and
     @r1[2] - (@r1[1] + !r1[1]) <= 12
 }
 
@@ -48,4 +76,17 @@ rule ioc_php_obf_concats_0 {
 
   condition:
     #r1 > 3
+}
+
+rule ioc_php_obf_sglobals_scoped_0 {
+  meta:
+    author = "roscoe skeens"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf super globals"
+
+  strings:
+    $h1 = { 24 5F 53 45 52 56 45 52 [0-10] 5B [0-10] 5F [0-8] 3A 3A }
+
+  condition:
+    $h1
 }
