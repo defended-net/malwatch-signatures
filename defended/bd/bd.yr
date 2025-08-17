@@ -14,7 +14,7 @@ rule bd_php_anonfox_0 {
   strings:
     $h1 = { 68 65 78 64 65 63 [0-10] 28 [0-10] 73 75 62 73 74 72 }
     $h2 = { 73 74 72 6C 65 6E [0-10] 28 [0-10] 74 72 69 6D }
-    $h3 = { 70 61 63 6B [0-10] 28 [0-10] 22 [0-1] ?? [0-10] 22 }
+    $h3 = { 70 61 63 6B [0-10] 28 [0-10] 22 [0-10] ?? [0-10] 22 }
 
   condition:
     all of them
@@ -31,4 +31,19 @@ rule bd_php_eval_gz_b64_0 {
 
   condition:
     $s1
+}
+
+rule bd_php_sglobals_stream_0 {
+  meta:
+    author = "roscoe skeens"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "pub stream"
+
+  strings:
+    $s1 = "$_GET"
+    $s2 = "stream_wrapper_register"
+    $s3 = "fopen"
+
+  condition:
+    all of them
 }
