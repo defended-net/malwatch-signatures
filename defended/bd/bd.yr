@@ -7,7 +7,7 @@
 
 rule bd_php_anonfox_0 {
   meta:
-    author = "roscoe skeens"
+    author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
     description = "eval hex"
 
@@ -22,7 +22,7 @@ rule bd_php_anonfox_0 {
 
 rule bd_php_eval_gz_b64_0 {
   meta:
-    author = "roscoe skeens"
+    author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
     description = "eval gz b64 hex"
 
@@ -35,7 +35,7 @@ rule bd_php_eval_gz_b64_0 {
 
 rule bd_php_sglobals_stream_0 {
   meta:
-    author = "roscoe skeens"
+    author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
     description = "pub stream"
 
