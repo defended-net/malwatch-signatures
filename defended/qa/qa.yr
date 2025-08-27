@@ -7,9 +7,9 @@
 
 rule qa_eicar {
   meta:
-    author = "roscoe skeens"
+    author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "eicar test file."
+    description = "eicar test file"
 
   strings:
     $s1 = "$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!"

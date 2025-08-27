@@ -7,7 +7,7 @@
 
 rule ws_php_exec_0 {
   meta:
-    author = "roscoe skeens"
+    author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
     description = "webshell exec"
 
@@ -26,5 +26,28 @@ rule ws_php_exec_0 {
   condition:
     $s1 in (0..8) and
     any of ($s2, $s3, $s4) and
+    any of ($r*)
+}
+
+rule ws_php_proxy_0 {
+  meta:
+    author = "roscoe skeens (defended.net)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "webshell proxy"
+
+  strings:
+    $s1 = "<?php"
+    $s2 = "socket_accept"
+    $s3 = "stream_select"
+    $r1 = /(^|shell_|[^\w])exec\s?\(/
+    $r2 = /(^|[^\w])proc_open\s?\(/
+    $r3 = /(^|[^\w])popen\s?\(/
+    $r4 = /(^|[^\w])passthru\s?\(/
+    $r5 = /(^|[^\w])system\s?\(\s?[\$\'\"]/
+    $r6 = /(^|[^\w])eval\s?\(/
+
+  condition:
+    $s1 in (0..8) and
+    any of ($s2, $s3) and
     any of ($r*)
 }
