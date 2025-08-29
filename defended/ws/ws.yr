@@ -36,9 +36,8 @@ rule ws_php_proxy_0 {
     description = "webshell proxy"
 
   strings:
-    $s1 = "<?php"
-    $s2 = "socket_accept"
-    $s3 = "stream_select"
+    $s1 = "socket_accept"
+    $s2 = "socket_bind"
     $r1 = /(^|shell_|[^\w])exec\s?\(/
     $r2 = /(^|[^\w])proc_open\s?\(/
     $r3 = /(^|[^\w])popen\s?\(/
@@ -47,7 +46,6 @@ rule ws_php_proxy_0 {
     $r6 = /(^|[^\w])eval\s?\(/
 
   condition:
-    $s1 in (0..8) and
-    any of ($s2, $s3) and
+    any of ($s1, $s2) and
     any of ($r*)
 }

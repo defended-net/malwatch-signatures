@@ -71,11 +71,14 @@ rule ioc_php_obf_octals_0 {
   strings:
     $r1 = /\\[0-7]{3}/
     $s1 = "<?php"
+    $s2 = "preg_match"
+    $s3 = "\\000-"
 
   condition:
     $s1 in (0..8) and
     #r1 > 2 and
-    @r1[2] - (@r1[1] + !r1[1]) <= 12
+    @r1[2] - (@r1[1] + !r1[1]) <= 12 and
+    not any of ($s2, $s3)
 }
 
 rule ioc_php_obf_concats_0 {
