@@ -94,11 +94,24 @@ rule ioc_php_obf_concats_0 {
     #r1 > 3
 }
 
+rule ioc_php_obf_concats_incr_0 {
+  meta:
+    author = "roscoe skeens (defended.net)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf concats increments"
+
+  strings:
+    $r1 = /(\$\w{,8}\+\+;){2}/
+
+  condition:
+    $r1
+}
+
 rule ioc_php_obf_concats_name_0 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "obf concat name"
+    description = "obf concats name"
 
   strings:
     $r1 = /(\s{,4}\.\s{,4}['"][a-zA-Z0-9_]{1,16}['"]){3}/
@@ -131,4 +144,17 @@ rule ioc_php_fget_ip_0 {
 
   condition:
     $r1
+}
+
+rule ioc_js_obf_b64_redir_0 {
+  meta:
+    author = "roscoe skeens (defended.net)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf b64 redir"
+
+  strings:
+    $s1 = "d2luZG93LmxvY2F0aW9u"
+
+  condition:
+    $s1
 }
