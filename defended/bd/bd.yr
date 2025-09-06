@@ -37,7 +37,7 @@ rule bd_php_sglobals_stream_0 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "pub stream"
+    description = "super globals stream"
 
   strings:
     $s1 = "$_GET"
@@ -46,4 +46,43 @@ rule bd_php_sglobals_stream_0 {
 
   condition:
     all of them
+}
+
+rule bd_php_sglobals_assert_0 {
+  meta:
+    author = "roscoe skeens (defended.net)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "super globals assert"
+
+  strings:
+    $h1 = { 61 73 73 65 72 74 [0-10] 28 [0-10] 24 5F }
+
+  condition:
+    $h1
+}
+
+rule bd_php_callback_xpath_0 {
+  meta:
+    author = "roscoe skeens (defended.net)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "callback xpath"
+
+  strings:
+    $s1 = "php:functionString"
+
+  condition:
+    $s1
+}
+
+rule bd_php_callback_xslt_0 {
+  meta:
+    author = "roscoe skeens (defended.net)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "callback xslt"
+
+  strings:
+    $h1 = { 2D 3E [0-10] 72 65 67 69 73 74 65 72 50 48 50 46 75 6E 63 74 69 6F 6E 73 }
+
+  condition:
+    $h1
 }
