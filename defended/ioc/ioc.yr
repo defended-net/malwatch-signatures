@@ -169,7 +169,7 @@ rule ioc_php_dropper_small_upload_0 {
     filesize < 1024
 }
 
-rule ioc_php_artifcat_sys_cfg_0 {
+rule ioc_php_artifact_sys_cfg_0 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
