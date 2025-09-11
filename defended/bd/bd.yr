@@ -33,11 +33,11 @@ rule bd_php_eval_gz_b64_0 {
     $s1
 }
 
-rule bd_php_sglobals_stream_0 {
+rule bd_php_rce_stream_sglobal_0 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "super globals stream"
+    description = "rce stream sglobal"
 
   strings:
     $s1 = "$_GET"
@@ -48,11 +48,11 @@ rule bd_php_sglobals_stream_0 {
     all of them
 }
 
-rule bd_php_sglobals_assert_0 {
+rule bd_php_rce_assert_sglobal_0 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "super globals assert"
+    description = "rce assert sglobal"
 
   strings:
     $h1 = { 61 73 73 65 72 74 [0-10] 28 [0-10] 24 5F }
@@ -61,11 +61,38 @@ rule bd_php_sglobals_assert_0 {
     $h1
 }
 
-rule bd_php_callback_xpath_0 {
+rule bd_php_rce_cback_sglobal_0 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "callback xpath"
+    description = "rce cback sglobal"
+
+  strings:
+    $r1 = /(array_(filter|walk|udiff)|(u|ua|uk)sort)[ \t]{,8}\([ \t]{,8}\[\$(GLOBALS|_)/
+    $r2 = /(call_user_func|register_shutdown_function)[ \t]{,8}\(.{1,16}\[?\$(GLOBALS|_)[CFGPRS]/
+
+  condition:
+    any of them
+}
+
+rule bd_php_rce_bticks_0 {
+  meta:
+    author = "roscoe skeens (defended.net)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "rce bticks"
+
+  strings:
+    $r1 = /`[ \t]{0,8}\$`/
+
+  condition:
+    $r1 and filesize < 512
+}
+
+rule bd_php_cback_xpath_0 {
+  meta:
+    author = "roscoe skeens (defended.net)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "cback xpath"
 
   strings:
     $s1 = "php:functionString"
@@ -74,11 +101,11 @@ rule bd_php_callback_xpath_0 {
     $s1
 }
 
-rule bd_php_callback_xslt_0 {
+rule bd_php_cback_xslt_0 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "callback xslt"
+    description = "cback xslt"
 
   strings:
     $h1 = { 2D 3E [0-10] 72 65 67 69 73 74 65 72 50 48 50 46 75 6E 63 74 69 6F 6E 73 }
