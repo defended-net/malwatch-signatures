@@ -5,7 +5,7 @@
                             defended.net
 */
 
-rule epx_php_addr_mask_0 {
+rule exp_php_addr_mask_0 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
@@ -18,7 +18,7 @@ rule epx_php_addr_mask_0 {
     $s1
 }
 
-rule epx_php_heap_groom_0 {
+rule exp_php_heap_groom_0 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
