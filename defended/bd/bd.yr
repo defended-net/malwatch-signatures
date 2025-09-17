@@ -82,7 +82,7 @@ rule bd_php_rce_bticks_0 {
     description = "rce bticks"
 
   strings:
-    $r1 = /`[ \t]{0,8}\$`/
+    $r1 = /`[ \t]{0,8}\$/
 
   condition:
     $r1 and filesize < 512

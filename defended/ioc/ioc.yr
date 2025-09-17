@@ -133,6 +133,26 @@ rule ioc_php_obf_scoped_sglobal_0 {
     $h1
 }
 
+rule ioc_php_obf_xor_0 {
+  meta:
+    author = "roscoe skeens (defended.net)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf xor"
+
+  strings:
+    $s1 = "<?php"
+    $r1 = /\beval[ \t]{0,8}\([^)]/
+    $r2 = /\bstrrev/
+    $r3 = /\bstr_rot13/
+    $r4 = /\bhex2bin/
+    $r5 = /\bconvert_uudecode/
+
+  condition:
+    $s1 in (0..8) and
+    $r1 and
+    any of ($r2, $r3, $r4, $r5)
+}
+
 rule ioc_php_ip_fget_0 {
   meta:
     author = "roscoe skeens (defended.net)"
@@ -194,6 +214,19 @@ rule ioc_js_obf_b64_redir_0 {
 
   strings:
     $s1 = "d2luZG93LmxvY2F0aW9u"
+
+  condition:
+    $s1
+}
+
+rule ioc_js_obf_b64_inj_0 {
+  meta:
+    author = "roscoe skeens (defended.net)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf b64 inj"
+
+  strings:
+    $s1 = "ZG9jdW1lbnQud3JpdGU"
 
   condition:
     $s1
