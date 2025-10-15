@@ -18,12 +18,12 @@ rule ws_php_exec_0 {
     $s4 = "<form" nocase
     $s5 = "socket_accept" nocase
     $s6 = "socket_bind" nocase
-    $r1 = /\b(shell_exec|exec)[ \t]{,4}\(/ nocase
-    $r2 = /\bproc_open[ \t]{,4}\(/ nocase
-    $r3 = /\bpopen[ \t]{,4}\(/ nocase
-    $r4 = /\bpassthru[ \t]{,4}\(/ nocase
-    $r5 = /\bsystem[ \t]{,4}\(\s?[\$\'\"]/ nocase
-    $r6 = /\beval[ \t]{,4}\(/ nocase
+    $r1 = /(^|shell_|[^\w:])exec[ \t]{,4}\(/ nocase
+    $r2 = /(^|[^\w])proc_open[ \t]{,4}\(/ nocase
+    $r3 = /(^|[^\w])popen[ \t]{,4}\(/ nocase
+    $r4 = /(^|[^\w])passthru[ \t]{,4}\(/ nocase
+    $r5 = /(^|[^\w])system[ \t]{,4}\(\s?[\$\'\"]/ nocase
+    $r6 = /(^|[^\w])eval[ \t]{,4}\(/ nocase
 
   condition:
     $s1 and

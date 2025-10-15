@@ -83,9 +83,12 @@ rule bd_php_rce_bticks_0 {
 
   strings:
     $r1 = /`[ \t]{0,8}\$/
+    $s1 = "<?php"
 
   condition:
-    $r1 and filesize < 512
+    $s1 in (0..8) and
+    $r1 and
+    filesize < 512
 }
 
 rule bd_php_cback_xpath_0 {
