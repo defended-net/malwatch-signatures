@@ -1,10 +1,13 @@
-<pre>
-              __            __      __
-  __ _  ___ _/ /    _____ _/ /_____/ /
- /    \/ _ `/ / |/|/ / _ `/ __/ __/ _ \
-/_/_/_/\_,_/_/|__,__/\_,_/\__/\__/_//_/
-                           defended.net
-</pre>
+<p align="center">
+  <a href="https://defended.net">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://defended.net/images/logo/malwatch-light.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://defended.net/images/logo/malwatch-dark.png">
+      <img alt="malwatch" src="https://defended.net/images/logo/malwatch-dark.png" width="704">
+    </picture>
+  </a>
+  <h2 align="center">Fast and lightweight malware scanning</h2>
+</p>
 
 Malwatch is a malware scanner primarily designed for web server environments. It is battle proven and in production with some of the internet's busiest websites.
 Our objective is to offer a comparably better solution to commercial products, thereby empowering everyone to have good malware protection.
