@@ -28,10 +28,22 @@ rule ioc_php_obf_comments_1 {
     description = "obf comments"
 
   strings:
-    $h1 = { (0D 0A | 0A) 2E 20[0-10] (2F 2F | 2F 2A) }
+    $h1  = { (0D 0A | 0A) 2E 20[0-10] (2F 2F | 2F 2A) }
+    $h2  = { 4F 54 54 4F }
+    $h3  = { 74 74 63 66 }
+    $h4  = { 77 4F 46 46 }
+    $h5  = { 77 4F 46 32 }
+    $h6  = { 00 01 00 00 }
+    $h7  = { 52 49 46 46 ?? ?? ?? ?? 57 45 42 50 }
+    $h8  = { 1F 8B 08 }
+    $h9  = { 42 5A 68 }
+    $h10 = { 25 50 44 46 }
+    $h11 = { 89 50 4E 47 }
+    $h12 = { 47 49 46 38 }
+    $h13 = { FF D8 FF }
 
   condition:
-    $h1
+    $h1 and not any of ($h2, $h3, $h4, $h5, $h6, $h7, $h8, $h9, $h10, $h11, $h12, $h13)
 }
 
 rule ioc_php_obf_hex_0 {
@@ -141,16 +153,11 @@ rule ioc_php_obf_xor_0 {
 
   strings:
     $s1 = "<?php"
-    $r1 = /\beval[ \t]{0,8}\([^)]/
-    $r2 = /\bstrrev/
-    $r3 = /\bstr_rot13/
-    $r4 = /\bhex2bin/
-    $r5 = /\bconvert_uudecode/
+    $r1 = /\beval[ \t]{0,8}\([^)]{0,32}(strrev|str_rot13|hex2bin|convert_uudecode)[ \t]{0,8}\(/
+    $r2 = /\beval[ \t]{0,8}\([ \t]{0,4}eval[ \t]{0,8}\(/
 
   condition:
-    $s1 in (0..8) and
-    $r1 and
-    any of ($r2, $r3, $r4, $r5)
+    $s1 in (0..8) and ($r1 or $r2)
 }
 
 rule ioc_php_ip_fget_0 {
@@ -189,7 +196,7 @@ rule ioc_php_dropper_small_upload_0 {
     filesize < 1024
 }
 
-rule ioc_php_artifact_sys_cfg_0 {
+rule ioc_php_artifact_sys_cfg_1 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
@@ -198,36 +205,24 @@ rule ioc_php_artifact_sys_cfg_0 {
   strings:
     $s1 = "<?php"
     $s2 = "/etc/passwd"
-    $s3 = "/etc/hosts"
     $s4 = "/etc/named.conf"
 
   condition:
     $s1 in (0..8) and
-    any of ($s2, $s3, $s4)
+    any of ($s2, $s4)
 }
 
+// Also covers ioc_js_obf_b64_inj_0; retain both original literal patterns.
 rule ioc_js_obf_b64_redir_0 {
   meta:
     author = "roscoe skeens (defended.net)"
     license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "obf b64 redir"
+    description = "obf b64 redir or inj"
 
   strings:
     $s1 = "d2luZG93LmxvY2F0aW9u"
+    $s2 = "ZG9jdW1lbnQud3JpdGU"
 
   condition:
-    $s1
-}
-
-rule ioc_js_obf_b64_inj_0 {
-  meta:
-    author = "roscoe skeens (defended.net)"
-    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
-    description = "obf b64 inj"
-
-  strings:
-    $s1 = "ZG9jdW1lbnQud3JpdGU"
-
-  condition:
-    $s1
+    $s1 or $s2
 }
