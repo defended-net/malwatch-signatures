@@ -1,0 +1,120 @@
+/*             __            __      __
+   __ _  ___ _/ /    _____ _/ /_____/ /
+  /    \/ _ `/ / |/|/ / _ `/ __/ __/ _ \
+ /_/_/_/\_,_/_/|__,__/\_,_/\__/\__/_//_/
+                            defended.net
+*/
+
+rule ws_php_eval_sglobal_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "ws exec req sglobal"
+
+  strings:
+    $r1 = /\$_(GET|POST|COOKIE|REQUEST)\b/
+    $r2 = /\b((eval|assert|system|passthru|shell_exec|exec|popen|proc_open|pcntl_exec|create_function)\s{0,4}\(|call_user_func(_array)?\s{0,4}\(\s{0,4}(\$[A-Za-z_]\w{0,31}\s{0,4}=\s{0,4})?(["'](eval|assert|system|passthru|shell_exec|exec|popen|proc_open|pcntl_exec|ssh2_exec|create_function)["']\s{0,4},|(base64_decode|gzinflate|gzuncompress|str_rot13|strrev|hex2bin|urldecode|rawurldecode)\s{0,4}\(|\$[A-Za-z_]\w{0,31}\s{0,4},[^;]{0,96}(\bchr\s{0,2}\(\s{0,2}([3-9][0-9]|1[01][0-9]|12[0-6])\s{0,2}\)[^;]{0,24}\.\s{0,2}){3}))/ nocase
+    $r3 = /\b(system|passthru|shell_exec|exec|popen|proc_open|pcntl_exec|ssh2_exec)\s{0,4}\(\s{0,4}[$"']/ nocase
+    $r4 = /\b(c|C)(a|A)(l|L)(l|L)_(u|U)(s|S)(e|E)(r|R)_(f|F)(u|U)(n|N)(c|C)(_(a|A)(r|R)(r|R)(a|A)(y|Y))?\s{0,4}\(\s{0,4}(\$[A-Za-z_]\w{0,31}\s{0,4}=\s{0,4})?(\(\s{0,4}){0,2}\$_(GET|POST|COOKIE|REQUEST)\b/
+
+  condition:
+    $r4
+    or
+    (
+      $r1 and $r2 and
+      ((@r1[1] < @r2[1] and @r2[1] - @r1[1] < 160) or
+       (@r2[1] < @r1[1] and @r1[1] - @r2[1] < 160))
+    )
+    or
+    (
+      $r3 and $r1 and
+      ((@r3[1] < @r1[1] and @r1[1] - @r3[1] < 256) or
+       (@r1[1] < @r3[1] and @r3[1] - @r1[1] < 256))
+    )
+}
+
+rule ws_php_eval_sglobal_b64_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "ws eval b64"
+
+  strings:
+    $r1 = /\beval\s{0,4}\(\s{0,4}(base64_decode|gzinflate|gzuncompress|str_rot13|strrev|hex2bin|urldecode|rawurldecode|pack|\$[A-Za-z_]\w{0,31}\[)/ nocase
+    $r2 = /preg_replace\s{0,4}\(\s{0,4}['"][^'"]{0,32}e['"]/ nocase
+    $r3 = /\b(base64_decode|gzinflate|gzuncompress|str_rot13|strrev|hex2bin)\s{0,4}\(/ nocase
+    $r4 = /\$_(GET|POST|COOKIE|REQUEST|SERVER|FILES)\b/
+
+  condition:
+    ($r1 and ($r4 or $r3)) or $r2
+}
+
+rule ws_php_exec_fetch_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "ws fetch exec"
+
+  strings:
+    $r1 = /\b(file_put_contents|move_uploaded_file|fwrite|copy)\s{0,4}\(\s{0,4}\$[A-Za-z_]\w{0,31}\s{0,4},\s{0,4}\$/ nocase
+    $r2 = /\b(include|include_once|require|require_once)\s{0,4}\(?/ nocase
+    $r3 = /\b(base64_decode|gzinflate|gzuncompress|str_rot13|strrev|hex2bin|urldecode|rawurldecode)\s{0,4}\(/ nocase
+
+  condition:
+    $r1 and $r2 and @r1[1] < @r2[1] and @r2[1] - @r1[1] < 256 and $r3
+}
+
+rule ws_php_xor_loop_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "ws xor loop"
+
+  strings:
+    $r1 = /\$[A-Za-z_]\w{0,31}\[\$\w{1,12}\]\s{0,4}=\s{0,4}\$[A-Za-z_]\w{0,31}\[\$\w{1,12}\]\s{0,4}\^\s{0,4}\$[A-Za-z_]\w{0,31}\[\$\w{1,12}\]/ nocase
+    $r2 = /\$[A-Za-z_]\w{0,31}\s{0,4}=\s{0,4}["'][0-9a-fA-F]{16,80}/ nocase
+
+  condition:
+    all of them
+}
+
+rule ws_php_wp_fake_load_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "ws fake plugin load"
+
+  strings:
+    $r1 = "Plugin Name:"
+    $r2 = /add_filter\s{0,4}\(\s{0,4}["']all_plugins["']/ nocase
+    $r3 = /base64_decode\s{0,4}\(\s{0,4}["'][A-Za-z0-9+\/=]{200,}["']/ nocase
+
+  condition:
+    $r1 and ($r2 or $r3)
+}
+
+rule ws_php_extract_sglobal_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "ws extract sglobal"
+
+  strings:
+    $r1 = /\bextract\s{0,4}\(\s{0,4}\$_(GET|POST|REQUEST|COOKIE|SERVER)/ nocase
+
+  condition:
+    $r1
+}
+
+rule ws_php_spread_sglobal_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "ws spread sglobal"
+
+  strings:
+    $r1 = /\(\s{0,4}\.\.\.\s{0,4}\$_(GET|POST|REQUEST|COOKIE)/ nocase
+
+  condition:
+    $r1
+}

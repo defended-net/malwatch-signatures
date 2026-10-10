@@ -1,0 +1,320 @@
+/*             __            __      __
+   __ _  ___ _/ /    _____ _/ /_____/ /
+  /    \/ _ `/ / |/|/ / _ `/ __/ __/ _ \
+ /_/_/_/\_,_/_/|__,__/\_,_/\__/\__/_//_/
+                            defended.net
+*/
+
+rule ioc_php_obf_eval_b64_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf eval order b64"
+
+  strings:
+    $r1 = /\b(eval|create_function|call_user_func(_array)?)\s{0,4}\(/ nocase
+    $r2 = /\b(base64_decode|gzinflate|gzuncompress|str_rot13|strrev|hex2bin)\s{0,4}\(/ nocase
+
+  condition:
+    $r1 and $r2 and @r1[1] < @r2[1] and @r2[1] - (@r1[1] + !r1[1]) < 48
+}
+
+rule ioc_php_obf_chain_b64_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf chain b64"
+
+  strings:
+    $r1 = /\b(base64_decode|hex2bin|rawurldecode)\s{0,4}\(/ nocase
+    $r2 = /\b(gzinflate|gzuncompress|gzdecode|str_rot13|strrev)\s{0,4}\(/ nocase
+
+  condition:
+    $r1 and $r2 and ((@r1[1] < @r2[1] and @r2[1] - @r1[1] < 64) or (@r2[1] < @r1[1] and @r1[1] - @r2[1] < 64))
+}
+
+rule ioc_php_obf_chain_hex_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf chain hex"
+
+  strings:
+    $r1 = /\$[A-Za-z_]\w{0,31}\s{0,4}=\s{0,4}["'](\\x[2-7][0-9A-Fa-f]){6,24}["'];\s{0,4}\$[A-Za-z_]\w{0,31}\s{0,4}\(/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_obf_chain_hex_1 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf chain hex"
+
+  strings:
+    $r1 = /\$\{("[^"']{0,20}\\x[0-9a-fA-F]{2}[^"']*"|'[^"']{0,20}\\x[0-9a-fA-F]{2}[^"']*')(\s*\.\s*("[^"']*"|'[^"']*'))*\s*\}/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_obf_chain_var_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf chain var"
+
+  strings:
+    $r1 = /\$\$[A-Za-z_]\w{0,31}\(/
+    $r2 = /\$\{\$[A-Za-z_]\w{0,31}\}\s{0,4}\(/
+
+  condition:
+    (#r1 >= 3 or $r2)
+}
+
+rule ioc_php_obf_chain_md5_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf chain md5"
+
+  strings:
+    $r1 = /\bmd5\s{0,4}\(\s{0,4}md5\s{0,4}\(\s{0,4}md5\s{0,4}\(\s{0,4}md5\s{0,4}\(/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_obf_concat_chr_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf concat chr"
+
+  strings:
+    $r1 = /\bchr\s{0,2}\(\s{0,2}([3-9][0-9]|1[01][0-9]|12[0-6])\s{0,2}\)\s{0,2}[.;]/
+    $r2 = /["'][A-Za-z]{1,6}["']\.["'][A-Za-z]{1,6}["']\(/ nocase
+
+    $r3 = /\beval\s{0,4}\(/ nocase
+    $r4 = /\bassert\s{0,4}\(/ nocase
+    $r5 = /\bsystem\s{0,4}\(/ nocase
+    $r6 = /\bpassthru\s{0,4}\(/ nocase
+    $r7 = /\bshell_exec\s{0,4}\(/ nocase
+    $r8 = /\bexec\s{0,4}\(/ nocase
+
+    $r9 = /\bcall_user_func\s{0,4}\(/ nocase
+    $r10 = /\bcall_user_func_array\s{0,4}\(/ nocase
+    $r11 = /\bcreate_function\s{0,4}\(/ nocase
+    $r12 = /\bpreg_replace\s{0,4}\(/ nocase
+
+    $r13 = /\$_(GET|POST|COOKIE|REQUEST|SERVER)\b/
+
+  condition:
+    (
+      #r1 >= 8 and
+      (any of ($r3, $r4, $r5, $r6, $r7, $r8) or any of ($r9, $r10, $r11, $r12) or $r13)
+    )
+    or
+    (
+      $r2 and any of ($r3, $r4, $r5, $r6, $r7, $r8)
+    )
+}
+
+rule ioc_php_obf_create_fn_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf create fn"
+
+  strings:
+    $r1 = /=\s{0,4}create_function\s{0,4}\(/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_eval_fetch_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "exec fetch"
+
+  strings:
+    $r1 = /\b(system|passthru|shell_exec|exec|popen|proc_open|pcntl_exec|ssh2_exec)\s{0,4}\(\s{0,4}["']/ nocase
+    $r2 = /\b(wget|curl|file_get_contents)\s{0,4}\(\s{0,4}["']https?\:\/\// nocase
+
+  condition:
+    #r1 >= 3 and $r2
+}
+
+rule ioc_php_eval_fetch_b64_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf fetch exec b64"
+
+  strings:
+    $r1 = /\b(file_get_contents|curl_exec|fsockopen|stream_get_contents)\s{0,4}\(\s{0,4}["']?(https?|ftp):\/\// nocase
+    $r2 = /\b(base64_decode|gzinflate|gzuncompress|str_rot13)\s{0,4}\(/ nocase
+    $r3 = /\b(eval|assert|system|passthru|shell_exec|exec|call_user_func)\s{0,4}\(\s{0,4}\$/ nocase
+
+  condition:
+    all of them
+}
+
+rule ioc_php_obf_irepl_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf ireplace strip"
+
+  strings:
+    $r1 = /\bstr_ireplace\s{0,4}\(\s{0,4}["'][a-zA-Z]{1,3}["']\s{0,4},\s{0,4}""\s{0,4},/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_obf_hash_equals_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf hash gate"
+
+  strings:
+    $r1 = /\bhash_equals\s{0,4}\(\s{0,4}["'][0-9a-f]{32}["']\s{0,4},\s{0,4}\$_(GET|POST|REQUEST|COOKIE)/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_obf_phonetic_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf phonetic"
+
+  strings:
+    $r1 = /\b(metaphone|soundex)\s{0,4}\(\s{0,4}["'][^"']{10,}["']/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_obf_arr_call_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf arr call"
+
+  strings:
+    $r1 = /\$[A-Za-z_]\w{0,31}\[\d{1,3}\]\s{0,4}\(\s{0,4}\)\s{0,4}[.;,=\s]/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_obf_disp_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf obj disp"
+
+  strings:
+    $r1 = /\$this->\w{1,20}\[\d{1,3}\]\s{0,2}\.\s{0,2}\$this->\w{1,20}\[\d{1,3}\]/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_obf_subtbl_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf subst map"
+
+  strings:
+    $r1 = /(['"][A-Za-z0-9]['"]\s{0,2}=>\s{0,2}['"][A-Za-z0-9]['"]\s{0,2},\s{0,2}){30,60}/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_obf_chr_hex_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "obf chr hex"
+
+  strings:
+    $r1 = /chr\s{0,2}\(\s{0,2}\d{2,3}\s{0,2}\)\s{0,2}\.?\s{0,2}["']?\\x[0-9a-fA-F]{2}/ nocase
+
+  condition:
+    #r1 >= 8
+}
+
+rule ioc_php_arch_sglobal_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "arch sglobal"
+
+  strings:
+    $r1 = /->\s{0,4}open\s{0,4}\(\s{0,4}\$_(GET|POST|REQUEST|COOKIE)[^;]{0,200}->\s{0,4}extractTo\s{0,4}\(/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_php_stomp_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "timestomp"
+
+  strings:
+    $r1 = /touch\s{0,4}\(\s{0,4}__FILE__\s{0,4},\s{0,4}filemtime\s{0,4}\(/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_js_obf_hex_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "js obf hexcall"
+
+  strings:
+    $r1 = /_0x[0-9a-fA-F]{4,24}\(0x[0-9a-fA-F]{1,6}\)/ nocase
+
+  condition:
+    #r1 >= 24
+}
+
+rule ioc_js_obf_atob_b64_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "js obf atob"
+
+  strings:
+    $r1 = /atob\s{0,2}\(["']?[A-Za-z0-9+\/=]{40,999}/ nocase
+
+  condition:
+    $r1
+}
+
+rule ioc_js_obf_arr_rot_0 {
+  meta:
+    author = "roscoe skeens (predefine.ai)"
+    license = "https://creativecommons.org/licenses/by-nc-sa/4.0"
+    description = "js obf arr rot"
+
+  strings:
+    $r1 = /\[["']push["']\]\([A-Za-z_0-9]{1,32}\[["']shift["']\]\(\)\)/ nocase
+
+  condition:
+    $r1
+}
